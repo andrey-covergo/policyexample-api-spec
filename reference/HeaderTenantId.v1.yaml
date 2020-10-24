@@ -1,5 +1,0 @@
-title: HeaderTenantId
-type: object
-properties:
-  id:
-    type: string
