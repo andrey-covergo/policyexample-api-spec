@@ -1,0 +1,146 @@
+openapi: 3.0.0
+info:
+  title: InsurancePolicy
+  version: '1.0'
+  contact:
+    name: Andrey
+    email: andrey@covergo.com
+  license:
+    name: MIT
+  description: ''
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /policy:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyStates'
+              examples:
+                example-1:
+                  value:
+                    issued: true
+                    duration: null
+                    issueDate: '2019-08-24T14:15:22Z'
+                    expiryDate: null
+                    isExpired: true
+                    amount: 0
+                    businessTime: '2019-08-24T14:15:22Z'
+      operationId: get-policy
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: TenantId
+          description: Id of the tenant organisation
+      security:
+        - AccessToken: []
+      description: Returns the list of existing policies
+    post:
+      summary: ''
+      operationId: post-policy
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyId'
+              examples:
+                example-1:
+                  value:
+                    id: string
+      description: 'Create a new policy. If successfull, will return id of created policy.'
+      parameters: []
+  '/policy/{policyId}':
+    parameters:
+      - schema:
+          type: string
+        name: policyId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyState'
+      operationId: get-policy-policyId
+      description: Get a specific insurance policy by id
+      parameters: []
+    post:
+      summary: ''
+      operationId: post-policy-policyId
+      responses:
+        '200':
+          description: OK
+        '409':
+          description: Conflict - policy with such id already exists
+      description: 'Create new policy with a specified id. '
+components:
+  schemas:
+    PolicyState:
+      description: State of an insurance policy
+      type: object
+      properties:
+        issued:
+          type: boolean
+        duration:
+          type: string
+          format: date-time
+          default: 'null'
+        issueDate:
+          type: string
+          minLength: 1
+          default: 'null'
+          format: date-time
+        expiryDate:
+          type: string
+          format: date-time
+          default: 'null'
+        isExpired:
+          type: boolean
+        amount:
+          type: number
+        businessTime:
+          type: string
+          minLength: 1
+      required:
+        - issued
+        - issueDate
+        - isExpired
+        - amount
+        - businessTime
+      title: ''
+    PolicyStates:
+      title: PolicyStates
+      type: array
+      items:
+        $ref: '#/components/schemas/PolicyState'
+    PolicyId:
+      title: PolicyId
+      type: string
+      description: 'Id of a Policy, must be unique'
+    Amount:
+      type: integer
+      title: Amount
+      description: 'Maximum money amount this policy can cover, in USD cents'
+      format: int32
+      minimum: 1
+  securitySchemes:
+    AccessToken:
+      name: API Key
+      type: apiKey
+      in: header
+security:
+  - AccessToken: []
