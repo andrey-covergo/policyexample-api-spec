@@ -2,6 +2,7 @@ openapi: 3.0.0
 tags:
   - name: policy
   - name: commanding
+  - name: Business Time
 info:
   title: InsurancePolicy
   version: '1.0'
@@ -37,12 +38,7 @@ paths:
                       amount: 0
                       businessTime: '2019-08-24T14:15:22Z'
       operationId: get-policy
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: TenantId
-          description: Id of the tenant organisation
+      parameters: []
       security:
         - AccessToken: []
       description: Returns the list of existing policies
@@ -61,6 +57,8 @@ paths:
               examples:
                 example-1:
                   value: string
+        '400':
+          description: Bad Request
       description: 'Create a new policy. If successfull, will return id of created policy.'
       parameters: []
   '/policy/{policyId}':
@@ -81,46 +79,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PolicyState'
+        '404':
+          description: Not Found
       operationId: get-policy-policyId
       description: Get a specific insurance policy by id
       parameters: []
-    post:
-      tags:
-        - policy
-      summary: ''
-      operationId: post-policy-policyId
-      responses:
-        '200':
-          description: OK
-        '409':
-          description: Conflict - policy with such id already exists
-      description: 'Create new policy with a specified id. '
-    patch:
-      summary: ''
-      operationId: patch-policy-policyId
-      responses:
-        '200':
-          description: OK
-      description: Updates an existing policy
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                Amount:
-                  $ref: '#/components/schemas/Amount'
-                Duration:
-                  $ref: '#/components/schemas/Duration'
-          application/xml:
-            schema:
-              type: object
-              properties:
-                '':
-                  $ref: '#/components/schemas/Duration'
-        description: Either amount or Duration must be set
-      tags:
-        - policy
   '/policy/{policyId}/issuance':
     parameters:
       - schema:
@@ -131,16 +94,35 @@ paths:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IssuanceRequestStatus'
+        '404':
+          description: Not Found
       operationId: get-policy-policyId-state
-      description: 'Get the information about this policy issuance records '
+      description: 'Get the information about this policy issuance requests '
     post:
       summary: ''
       operationId: post-policy-policyId-issuance
       responses:
         '200':
           description: OK
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
       description: 'Issue target policy. Issue intent id will be generated and returned. '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssuanceRequest'
   '/policy/{policyId}/issuance/{issuanceId}':
     parameters:
       - schema:
@@ -156,7 +138,15 @@ paths:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuanceRequestStatus'
+        '404':
+          description: Not Found
       operationId: get-policy-policyId-issuance-issuanceId
       description: Get status of an issuance request
   '/policy/{policyId}/configurations':
@@ -198,7 +188,7 @@ paths:
       responses: {}
       operationId: get-policy-policyId-configurations-configurationId
       description: Get information about a configuration request
-  'policy/{policyId}/businesstime/':
+  '/policy/{policyId}/businesstime/':
     parameters:
       - schema:
           type: string
@@ -207,10 +197,43 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
-      responses: {}
+      tags:
+        - Business Time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessTime'
+        '404':
+          description: Not Found
       operationId: get-policy-policyId-businesstime
       description: Get business time of the policy
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: policyId
+    post:
+      summary: ''
+      operationId: postpolicy-policyId-businesstime
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      description: 'Set the businees time of the policy. Needs additional permission. '
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessTime'
+      tags:
+        - Business Time
   '/policy/{policyId}/businesstime/{time}':
     parameters:
       - schema:
@@ -223,12 +246,6 @@ paths:
         name: time
         in: path
         required: true
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses: {}
-      operationId: get-policy-policyId-businesstime-time
-      description: Override the current business time of the policy. Requeires additional privileges.
   '/policy/{policyId}/claim':
     parameters:
       - schema:
@@ -268,13 +285,6 @@ paths:
       responses: {}
       operationId: get-policy-policyId-claim-claimId
       description: Gets information about a specified claim submitted for this policy
-    post:
-      summary: ''
-      operationId: post-policy-policyId-claim-claimId
-      responses:
-        '200':
-          description: OK
-      description: Fill a new claim with specified id against the policy.
 components:
   schemas:
     PolicyState:
@@ -339,6 +349,50 @@ components:
           type: integer
           minimum: 1
           format: int64
+    IssuanceRequest:
+      title: IssuanceRequest
+      type: object
+      description: 'A request to issue a policy at given time. '
+      properties:
+        policyId:
+          type: string
+        issueTime:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          default: 'null'
+          description: |
+            Time when policy should be issued. Can be null for immediate issue or a moment in the future
+    RequestStatus:
+      title: RequestStatus
+      type: object
+      description: ''
+      properties:
+        id:
+          type: string
+        status:
+          $ref: '#/components/schemas/RequestStatus'
+        error:
+          type:
+            - string
+            - 'null'
+    RequestState:
+      type: string
+      title: RequestState
+      enum:
+        - pending
+        - received
+        - processing
+        - completed
+        - rejected
+      default: pending
+      description: 'Status of a request sent  '
+    BusinessTime:
+      type: string
+      title: BusinessTime
+      format: date-time
+      description: ''
   securitySchemes:
     AccessToken:
       name: API Key
