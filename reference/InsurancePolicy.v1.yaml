@@ -375,12 +375,7 @@ components:
         issued:
           type: boolean
         duration:
-          type: integer
-          nullable: true
-          default: 'null'
-          format: int64
-          description: |
-            Duration of the policy in seconds
+          $ref: '#/components/schemas/Duration'
         issueDate:
           type: string
           minLength: 1
@@ -394,17 +389,17 @@ components:
         isExpired:
           type: boolean
         amount:
-          type: number
+          $ref: '#/components/schemas/Amount'
         businessTime:
           type: string
           minLength: 1
           format: date-time
+        id:
+          type: string
       required:
         - issued
-        - issueDate
         - isExpired
-        - amount
-        - businessTime
+        - id
     PolicyId:
       title: PolicyId
       type: string
@@ -412,13 +407,13 @@ components:
     Amount:
       type: integer
       title: Amount
-      description: 'Maximum money amount this policy can cover, in USD cents'
+      description: 'Money amount, in USD cents'
       format: int32
       minimum: 1
     Duration:
       title: Duration
       type: object
-      description: 'Duration of the policy, in seconds'
+      description: 'Duration, in seconds'
       properties:
         id:
           type: integer
