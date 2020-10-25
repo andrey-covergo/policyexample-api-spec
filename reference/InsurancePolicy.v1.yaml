@@ -395,15 +395,13 @@ components:
           default: 'null'
           format: date-time
         issueDate:
-          type:
-            - string
+          type: string
           minLength: 1
           default: null
           format: date-time
         expiryDate:
-          type:
-            - string
-            - 'null'
+          type: string
+          nullable: true
           format: date-time
           default: null
         isExpired:
@@ -446,9 +444,8 @@ components:
         policyId:
           type: string
         issueTime:
-          type:
-            - string
-            - 'null'
+          type: string
+          nullable: true
           format: date-time
           default: 'null'
           description: |
@@ -463,9 +460,8 @@ components:
         status:
           $ref: '#/components/schemas/RequestState'
         error:
-          type:
-            - string
-            - 'null'
+          type: string
+          nullable: true
     BusinessTime:
       type: string
       title: BusinessTime
