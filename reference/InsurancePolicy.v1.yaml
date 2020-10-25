@@ -1,8 +1,10 @@
 openapi: 3.0.0
 tags:
   - name: policy
-  - name: commanding
   - name: Business Time
+  - name: Issuance
+  - name: Configuration
+  - name: Claims
 info:
   title: InsurancePolicy
   version: '1.0'
@@ -26,7 +28,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PolicyStates'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PolicyState'
               examples:
                 example-1:
                   value:
@@ -39,8 +43,6 @@ paths:
                       businessTime: '2019-08-24T14:15:22Z'
       operationId: get-policy
       parameters: []
-      security:
-        - AccessToken: []
       description: Returns the list of existing policies
     post:
       tags:
@@ -71,7 +73,8 @@ paths:
         description: id of the policy for the operation
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - policy
       responses:
         '200':
           description: OK
@@ -93,7 +96,8 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - Issuance
       responses:
         '200':
           description: OK
@@ -102,7 +106,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/IssuanceRequestStatus'
+                  type: object
+                  properties:
+                    issuance:
+                      $ref: '#/components/schemas/IssuanceRequest'
+                    status:
+                      $ref: '#/components/schemas/RequestStatus'
         '404':
           description: Not Found
       operationId: get-policy-policyId-state
@@ -113,6 +122,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestStatus'
         '400':
           description: Bad Request
         '404':
@@ -123,6 +136,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IssuanceRequest'
+      tags:
+        - Issuance
   '/policy/{policyId}/issuance/{issuanceId}':
     parameters:
       - schema:
@@ -137,14 +152,15 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - Issuance
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IssuanceRequestStatus'
+                $ref: '#/components/schemas/RequestStatus'
         '404':
           description: Not Found
       operationId: get-policy-policyId-issuance-issuanceId
@@ -158,18 +174,48 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags:
-        - commanding
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    configurationRequest:
+                      $ref: '#/components/schemas/Configuration'
+                    status:
+                      $ref: '#/components/schemas/RequestStatus'
+        '404':
+          description: Not Found
       operationId: get-policy-policyId-configurations
       description: Get information about configurations happend to a policy
+      tags:
+        - Configuration
     post:
       summary: ''
       operationId: post-policy-policyId-configurations
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestStatus'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
       description: Raise new configuration request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configuration'
+      tags:
+        - Configuration
   '/policy/{policyId}/configurations/{configurationId}':
     parameters:
       - schema:
@@ -184,11 +230,20 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
-      responses: {}
+      tags:
+        - Configuration
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestStatus'
+        '404':
+          description: Not Found
       operationId: get-policy-policyId-configurations-configurationId
       description: Get information about a configuration request
-  '/policy/{policyId}/businesstime/':
+  '/policy/{policyId}/businesstime':
     parameters:
       - schema:
           type: string
@@ -234,18 +289,6 @@ paths:
               $ref: '#/components/schemas/BusinessTime'
       tags:
         - Business Time
-  '/policy/{policyId}/businesstime/{time}':
-    parameters:
-      - schema:
-          type: string
-        name: policyId
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: time
-        in: path
-        required: true
   '/policy/{policyId}/claim':
     parameters:
       - schema:
@@ -255,8 +298,19 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
-      responses: {}
+      tags:
+        - Claims
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Claim'
+        '404':
+          description: Not Found
       operationId: get-policy-policyId-claims
       description: |
         Get a list of claims submitted for this policy
@@ -266,7 +320,22 @@ paths:
       responses:
         '200':
           description: OK
-      description: Fill a new claim against policy
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestStatus'
+        '404':
+          description: Not Found
+      description: Submit a new claim against policy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Claim'
+      tags:
+        - Claims
   '/policy/{policyId}/claim/{claimId}':
     parameters:
       - schema:
@@ -281,12 +350,37 @@ paths:
         required: true
     get:
       summary: Your GET endpoint
-      tags: []
-      responses: {}
+      tags:
+        - Claims
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  claim:
+                    $ref: '#/components/schemas/Claim'
+                  status:
+                    $ref: '#/components/schemas/RequestStatus'
+        '404':
+          description: Not Found
       operationId: get-policy-policyId-claim-claimId
       description: Gets information about a specified claim submitted for this policy
 components:
   schemas:
+    RequestState:
+      type: string
+      title: RequestState
+      enum:
+        - pending
+        - received
+        - processing
+        - completed
+        - rejected
+      default: pending
+      description: 'Status of a request sent  '
     PolicyState:
       description: State of an insurance policy
       type: object
@@ -302,16 +396,15 @@ components:
         issueDate:
           type:
             - string
-            - 'null'
           minLength: 1
-          default: 'null'
+          default: null
           format: date-time
         expiryDate:
           type:
             - string
             - 'null'
           format: date-time
-          default: 'null'
+          default: null
         isExpired:
           type: boolean
         amount:
@@ -325,11 +418,6 @@ components:
         - isExpired
         - amount
         - businessTime
-    PolicyStates:
-      title: PolicyStates
-      type: array
-      items:
-        $ref: '#/components/schemas/PolicyState'
     PolicyId:
       title: PolicyId
       type: string
@@ -372,27 +460,43 @@ components:
         id:
           type: string
         status:
-          $ref: '#/components/schemas/RequestStatus'
+          $ref: '#/components/schemas/RequestState'
         error:
           type:
             - string
             - 'null'
-    RequestState:
-      type: string
-      title: RequestState
-      enum:
-        - pending
-        - received
-        - processing
-        - completed
-        - rejected
-      default: pending
-      description: 'Status of a request sent  '
     BusinessTime:
       type: string
       title: BusinessTime
       format: date-time
       description: ''
+    Configuration:
+      title: Configuration
+      type: object
+      properties:
+        requestId:
+          type: string
+        amount:
+          $ref: '#/components/schemas/Amount'
+        duration:
+          $ref: '#/components/schemas/Duration'
+        policyId:
+          $ref: '#/components/schemas/PolicyId'
+    Claim:
+      title: Claim
+      type: object
+      description: A claim filled towards a policy
+      properties:
+        id:
+          type: string
+        amount:
+          $ref: '#/components/schemas/ClaimAmount'
+    ClaimAmount:
+      type: integer
+      title: ClaimAmount
+      format: int32
+      minimum: 0
+      description: 'mney to claim from the policy, in USD cents'
   securitySchemes:
     AccessToken:
       name: API Key
