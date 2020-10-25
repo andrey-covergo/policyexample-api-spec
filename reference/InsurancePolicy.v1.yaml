@@ -411,14 +411,11 @@ components:
       format: int32
       minimum: 1
     Duration:
+      type: integer
       title: Duration
-      type: object
       description: 'Duration, in seconds'
-      properties:
-        id:
-          type: integer
-          minimum: 1
-          format: int64
+      format: int64
+      minimum: 0
     IssuanceRequest:
       title: IssuanceRequest
       type: object
