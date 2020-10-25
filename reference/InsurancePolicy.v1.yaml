@@ -1,7 +1,7 @@
 openapi: 3.0.0
 tags:
   - name: policy
-  - name: Business Time
+  - name: BusinessTime
   - name: Issuance
   - name: Configuration
   - name: Claims
@@ -253,8 +253,6 @@ paths:
         required: true
     get:
       summary: Get policy business time
-      tags:
-        - Business Time
       responses:
         '200':
           description: OK
@@ -267,6 +265,8 @@ paths:
       operationId: get-policy-policyId-businesstime
       description: Get business time of the policy
       parameters: []
+      tags:
+        - BusinessTime
     post:
       summary: Override policy business time
       operationId: postpolicy-policyId-businesstime
@@ -285,7 +285,7 @@ paths:
             schema:
               $ref: '#/components/schemas/BusinessTime'
       tags:
-        - Business Time
+        - BusinessTime
   '/policy/{policyId}/claim':
     parameters:
       - schema:
