@@ -499,7 +499,7 @@ components:
       description: 'mney to claim from the policy, in USD cents'
   securitySchemes:
     AccessToken:
-      name: API Key
+      name: APIKey
       type: apiKey
       in: header
 security:
