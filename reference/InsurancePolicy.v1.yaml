@@ -17,6 +17,10 @@ info:
 servers:
   - url: 'http://localhost:4010'
     description: Local Prism (requires setup)
+  - url: 'http://localhost:5000'
+    description: Local Asp.Net Core HTTP
+  - url: 'https://localhost:5001'
+    description: Local Asp.Net Core HTTPS
 paths:
   /policy:
     get:
