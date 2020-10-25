@@ -266,11 +266,7 @@ paths:
           description: Not Found
       operationId: get-policy-policyId-businesstime
       description: Get business time of the policy
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: policyId
+      parameters: []
     post:
       summary: Override policy business time
       operationId: postpolicy-policyId-businesstime
