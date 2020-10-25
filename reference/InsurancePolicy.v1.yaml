@@ -111,12 +111,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    issuance:
-                      $ref: '#/components/schemas/IssuanceRequest'
-                    status:
-                      $ref: '#/components/schemas/RequestStatus'
+                  $ref: '#/components/schemas/IssuanceWithStatus'
         '404':
           description: Not Found
       operationId: get-policy-policyId-state
@@ -165,7 +160,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RequestStatus'
+                $ref: '#/components/schemas/IssuanceWithStatus'
         '404':
           description: Not Found
       operationId: get-policy-policyId-issuance-issuanceId
@@ -187,12 +182,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    configurationRequest:
-                      $ref: '#/components/schemas/Configuration'
-                    status:
-                      $ref: '#/components/schemas/RequestStatus'
+                  $ref: '#/components/schemas/ConfigurationWithStatus'
         '404':
           description: Not Found
       operationId: get-policy-policyId-configurations
@@ -243,7 +233,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RequestStatus'
+                $ref: '#/components/schemas/ConfigurationWithStatus'
         '404':
           description: Not Found
       operationId: get-policy-policyId-configurations-configurationId
@@ -309,7 +299,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Claim'
+                  $ref: '#/components/schemas/ClaimWithStatus'
         '404':
           description: Not Found
       operationId: get-policy-policyId-claims
@@ -359,12 +349,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  claim:
-                    $ref: '#/components/schemas/Claim'
-                  status:
-                    $ref: '#/components/schemas/RequestStatus'
+                $ref: '#/components/schemas/ClaimWithStatus'
         '404':
           description: Not Found
       operationId: get-policy-policyId-claim-claimId
@@ -390,10 +375,12 @@ components:
         issued:
           type: boolean
         duration:
-          type: string
+          type: integer
           nullable: true
           default: 'null'
-          format: date-time
+          format: int64
+          description: |
+            Duration of the policy in seconds
         issueDate:
           type: string
           minLength: 1
@@ -411,6 +398,7 @@ components:
         businessTime:
           type: string
           minLength: 1
+          format: date-time
       required:
         - issued
         - issueDate
@@ -494,6 +482,33 @@ components:
       format: int32
       minimum: 0
       description: 'mney to claim from the policy, in USD cents'
+    IssuanceWithStatus:
+      title: IssuanceWithStatus
+      type: object
+      properties:
+        issuance:
+          $ref: '#/components/schemas/IssuanceRequest'
+        status:
+          $ref: '#/components/schemas/RequestStatus'
+      description: 'Issuance request with its status '
+    ConfigurationWithStatus:
+      title: ConfigurationWithStatus
+      type: object
+      properties:
+        configuration:
+          $ref: '#/components/schemas/Configuration'
+        status:
+          $ref: '#/components/schemas/RequestStatus'
+      description: Configuration request details with its status
+    ClaimWithStatus:
+      title: ClaimWithStatus
+      type: object
+      properties:
+        claim:
+          $ref: '#/components/schemas/Claim'
+        status:
+          $ref: '#/components/schemas/RequestStatus'
+      description: Claim information with its status
   securitySchemes:
     AccessToken:
       name: APIKey
