@@ -19,7 +19,7 @@ servers:
 paths:
   /policy:
     get:
-      summary: Your GET endpoint
+      summary: Get policies
       tags:
         - policy
       responses:
@@ -47,7 +47,7 @@ paths:
     post:
       tags:
         - policy
-      summary: ''
+      summary: Create policy
       operationId: post-policy
       responses:
         '200':
@@ -72,7 +72,7 @@ paths:
         required: true
         description: id of the policy for the operation
     get:
-      summary: Your GET endpoint
+      summary: Get policy details
       tags:
         - policy
       responses:
@@ -95,7 +95,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get issuance requests
       tags:
         - Issuance
       responses:
@@ -117,7 +117,7 @@ paths:
       operationId: get-policy-policyId-state
       description: 'Get the information about this policy issuance requests '
     post:
-      summary: ''
+      summary: Create issuance request
       operationId: post-policy-policyId-issuance
       responses:
         '200':
@@ -151,7 +151,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get issuance request details
       tags:
         - Issuance
       responses:
@@ -173,7 +173,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get policy configurations
       responses:
         '200':
           description: OK
@@ -195,7 +195,7 @@ paths:
       tags:
         - Configuration
     post:
-      summary: ''
+      summary: Create policy configuration
       operationId: post-policy-policyId-configurations
       responses:
         '200':
@@ -229,7 +229,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get policy configuration details
       tags:
         - Configuration
       responses:
@@ -251,7 +251,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get policy business time
       tags:
         - Business Time
       responses:
@@ -271,7 +271,7 @@ paths:
           in: query
           name: policyId
     post:
-      summary: ''
+      summary: Override policy business time
       operationId: postpolicy-policyId-businesstime
       responses:
         '202':
@@ -297,7 +297,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get policy claims
       tags:
         - Claims
       responses:
@@ -315,7 +315,7 @@ paths:
       description: |
         Get a list of claims submitted for this policy
     post:
-      summary: ''
+      summary: Submit policy claim
       operationId: post-policy-policyId-claim
       responses:
         '200':
@@ -349,7 +349,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get policy claim details
       tags:
         - Claims
       responses:
