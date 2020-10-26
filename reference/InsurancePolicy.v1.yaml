@@ -46,7 +46,7 @@ paths:
                       isExpired: true
                       amount: 100000
                       businessTime: '2019-08-24T14:15:22Z'
-                      id: "abc"
+                      id: abc
       operationId: get-policy
       parameters: []
       description: Returns the list of existing policies
@@ -69,15 +69,6 @@ paths:
           description: Bad Request
       description: 'Create a new policy. If successfull, will return id of created policy.'
       parameters: []
-    options:
-      summary: ''
-      operationId: options-policy
-      responses:
-        '200':
-          description: OK
-      description: Support for Chrome CORS checks
-      tags:
-        - policy
   '/policy/{policyId}':
     parameters:
       - schema:
