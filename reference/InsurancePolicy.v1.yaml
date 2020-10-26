@@ -40,12 +40,13 @@ paths:
                 example-1:
                   value:
                     - issued: true
-                      duration: null
+                      duration: 0
                       issueDate: '2019-08-24T14:15:22Z'
-                      expiryDate: null
+                      expiryDate: '2025-08-24T14:15:22Z'
                       isExpired: true
-                      amount: 0
+                      amount: 100000
                       businessTime: '2019-08-24T14:15:22Z'
+                      id: "abc"
       operationId: get-policy
       parameters: []
       description: Returns the list of existing policies
@@ -75,6 +76,8 @@ paths:
         '200':
           description: OK
       description: Support for Chrome CORS checks
+      tags:
+        - policy
   '/policy/{policyId}':
     parameters:
       - schema:
